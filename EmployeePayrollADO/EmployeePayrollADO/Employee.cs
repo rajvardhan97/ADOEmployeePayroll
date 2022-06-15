@@ -87,7 +87,7 @@ namespace EmployeePayrollADO
                     sqlConnection.Close();
         }
 
-        public void UpdateSalary()
+        public int UpdateSalary()
         {
             sqlConnection.Open();
             string query = "update employee_payroll set BasicPay=3000000 where EmployeeName= 'Terrrisa'";
@@ -104,6 +104,40 @@ namespace EmployeePayrollADO
             }
             sqlConnection.Close();
             GetSqlData();
+            return result;
+        }
+
+        public int UpdateSalary(EmployeeData employeeData)
+        {
+            int result = 0;
+            try
+            {
+                using (sqlConnection)
+                {
+                    SqlCommand sqlCommand = new SqlCommand("dbo.UpdateDetails", this.sqlConnection);
+                    sqlCommand.CommandType = CommandType.StoredProcedure;
+                    sqlCommand.Parameters.AddWithValue("@salary", employeeData.Basic_Pay);
+                    sqlCommand.Parameters.AddWithValue("@Name", employeeData.Name);
+                    sqlCommand.Parameters.AddWithValue("@Id", employeeData.ID);
+
+                    sqlConnection.Open();
+                    result = sqlCommand.ExecuteNonQuery();
+                    if (result != 0)
+                    {
+                        Console.WriteLine("Updated");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Not Updated");
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                throw new CustomException(CustomException.ExceptionType.No_data_found, "Cannot Update");
+            }
+            return result;
         }
     }
 }
