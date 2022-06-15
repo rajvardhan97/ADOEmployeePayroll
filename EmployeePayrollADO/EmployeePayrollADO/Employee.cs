@@ -139,5 +139,68 @@ namespace EmployeePayrollADO
             }
             return result;
         }
+
+        public string DataBasedOnDateRange()
+        {
+            string nameList = "";
+            try
+            {
+                using (sqlConnection)
+                {
+                    string query = @"select * from employee_payroll where StartDate BETWEEN '2022-01-12' and GetDate()";
+                    SqlCommand command = new SqlCommand(query, this.sqlConnection);
+                    sqlConnection.Open();
+
+                    SqlDataReader sqlDataReader = command.ExecuteReader();
+                    if (sqlDataReader.HasRows)
+                    {
+                        while (sqlDataReader.Read())
+                        {
+                            DisplayEmployeeDetails(sqlDataReader);
+                            nameList += sqlDataReader["Name"].ToString();
+                        }
+                    }
+                    sqlDataReader.Close();
+                }
+
+            }
+            catch (Exception)
+            {
+                throw new CustomException(CustomException.ExceptionType.No_data_found, "No Data Found");
+            }
+            sqlConnection.Close();
+            return nameList;
+
+        }
+        public void DisplayEmployeeDetails(SqlDataReader sqlDataReader)
+        {
+            employeeData.ID = sqlDataReader.GetInt32(0);
+            employeeData.Name = sqlDataReader["Name"].ToString();
+            employeeData.Salary = Convert.ToDouble(sqlDataReader["Salary"]);
+            employeeData.StartDate = Convert.ToDateTime(sqlDataReader["StartDate"]);
+            employeeData.Gender = Convert.ToChar(sqlDataReader["Gender"]);
+            employeeData.PhoneNumber = Convert.ToDouble(sqlDataReader["PhoneNumber"]);
+            employeeData.Address = sqlDataReader["Address"].ToString();
+            employeeData.Department = sqlDataReader["Department"].ToString();
+            employeeData.Basic_Pay = Convert.ToDouble(sqlDataReader["BasicPay"]);
+            employeeData.Deductions = Convert.ToDouble(sqlDataReader["Deduction"]);
+            employeeData.Income_Tax = Convert.ToDouble(sqlDataReader["IncomeTax"]);
+            employeeData.Taxable_Pay = Convert.ToDouble(sqlDataReader["TaxablePay"]);
+            employeeData.Net_Pay = Convert.ToDouble(sqlDataReader["NetPay"]);
+
+            Console.WriteLine("ID" + employeeData.ID + "\n" +
+                "Name" + employeeData.Name + "\n" +
+                "Salary" + employeeData.Salary +
+                "Start Date" + employeeData.StartDate +
+                "Gender" + employeeData.Gender +
+                "Phone Number" + employeeData.PhoneNumber +
+                "Address" + employeeData.Address +
+                "Department" + employeeData.Department +
+                "Basic Pay" + employeeData.Basic_Pay +
+                "Deductions" + employeeData.Deductions +
+                "Income Tax" + employeeData.Income_Tax +
+                "Taxable Pay" + employeeData.Taxable_Pay +
+                "Net Pay" + employeeData.Net_Pay);
+        }
     }
 }
