@@ -8,7 +8,7 @@ namespace EmployeePayrollADO
         public double Salary { get; set; }
         public DateTime StartDate { get; set; }
         public char Gender { get; set; }
-        public Int64 PhoneNumber { get; set; }
+        public double PhoneNumber { get; set; }
         public string Address { get; set; }
         public string Department { get; set; }
         public double Basic_Pay { get; set; }

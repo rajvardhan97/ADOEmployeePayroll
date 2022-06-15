@@ -7,7 +7,8 @@ namespace EmployeePayrollADO
         {
             Employee employeeData = new Employee();
             employeeData.SetConnection();
-            employeeData.Close();
+            employeeData.CloseConnection();
+            employeeData.GetSqlData();
         }
     }
 }
