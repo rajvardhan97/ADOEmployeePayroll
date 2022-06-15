@@ -86,5 +86,24 @@ namespace EmployeePayrollADO
             }
                     sqlConnection.Close();
         }
+
+        public void UpdateSalary()
+        {
+            sqlConnection.Open();
+            string query = "update employee_payroll set BasicPay=3000000 where EmployeeName= 'Terrrisa'";
+
+            SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
+            int result = sqlCommand.ExecuteNonQuery();
+            if (result != 0)
+            {
+                Console.WriteLine("Updated");
+            }
+            else
+            {
+                Console.WriteLine("Not Updated");
+            }
+            sqlConnection.Close();
+            GetSqlData();
+        }
     }
 }
