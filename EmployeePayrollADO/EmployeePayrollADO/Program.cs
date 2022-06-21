@@ -9,7 +9,6 @@ namespace EmployeePayrollADO
             employeeData.SetConnection();
             employeeData.CloseConnection();
             employeeData.GetSqlData();
-            employeeData.UpdateSalary();
         }
     }
 }

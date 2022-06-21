@@ -11,10 +11,10 @@ namespace EmployeePayrollADO
         public double PhoneNumber { get; set; }
         public string Address { get; set; }
         public string Department { get; set; }
-        public double Basic_Pay { get; set; }
+        public double BasicPay { get; set; }
         public double Deductions { get; set; }
-        public double Income_Tax { get; set; }
-        public double Taxable_Pay { get; set; }
-        public double Net_Pay { get; set; }
+        public double IncomeTax { get; set; }
+        public double TaxablePay { get; set; }
+        public double NetPay { get; set; }
     }
 }

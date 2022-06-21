@@ -10,8 +10,10 @@ namespace EmployeePayrollADO
 {
     public class Employee
     {
-        public static string connection = @"Data Source = RAJVARDHAN; Initial Catalog = Payroll_Service; Integrated Security=SSPI";
+        public static string connection = @"Data Source = RAJVARDHAN;Initial Catalog = Payroll_Service;Integrated Security=SSPI";
         SqlConnection sqlConnection = new SqlConnection(connection);
+
+        
 
         public void SetConnection()
         {
@@ -21,12 +23,13 @@ namespace EmployeePayrollADO
                 {
                     sqlConnection.Open();
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     throw new CustomException(CustomException.ExceptionType.Connection_Failed, "Connection Failed");
                 }
             }
         }
+
         public void CloseConnection()
         {
             if(sqlConnection != null && !sqlConnection.State.Equals(ConnectionState.Open))
@@ -46,51 +49,54 @@ namespace EmployeePayrollADO
         public void GetSqlData()
         {
             sqlConnection.Open();
-            string query = "select * from employee_payroll";
-
-            SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
-            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
-            if (sqlDataReader.HasRows)
+            string Spname = "dbo.ViewDetails";
+            using (sqlConnection)
             {
-                while (sqlDataReader.Read())
+                SqlCommand sqlCommand = new SqlCommand(Spname, sqlConnection);
+                        sqlCommand.CommandType = CommandType.StoredProcedure;
+                SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                if (sqlDataReader.HasRows)
                 {
-                    employeeData.ID = sqlDataReader.GetInt32(0);
-                    employeeData.Name = sqlDataReader["Name"].ToString();
-                    employeeData.Salary = Convert.ToDouble(sqlDataReader["Salary"]);
-                    employeeData.StartDate = Convert.ToDateTime(sqlDataReader["StartDate"]);
-                    employeeData.Gender = Convert.ToChar(sqlDataReader["Gender"]);
-                    employeeData.PhoneNumber = Convert.ToDouble(sqlDataReader["PhoneNumber"]);
-                    employeeData.Address = sqlDataReader["Address"].ToString();
-                    employeeData.Department = sqlDataReader["Department"].ToString();
-                    employeeData.Basic_Pay = Convert.ToDouble(sqlDataReader["BasicPay"]);
-                    employeeData.Deductions = Convert.ToDouble(sqlDataReader["Deduction"]);
-                    employeeData.Income_Tax = Convert.ToDouble(sqlDataReader["IncomeTax"]);
-                    employeeData.Taxable_Pay = Convert.ToDouble(sqlDataReader["TaxablePay"]);
-                    employeeData.Net_Pay = Convert.ToDouble(sqlDataReader["NetPay"]);
+                    while (sqlDataReader.Read())
+                    {
+                        employeeData.ID = sqlDataReader.GetInt32(1);
+                        employeeData.Name = sqlDataReader["Name"].ToString();
+                        employeeData.Salary = Convert.ToDouble(sqlDataReader["Salary"]);
+                        employeeData.StartDate = Convert.ToDateTime(sqlDataReader["StartDate"]);
+                        employeeData.Gender = Convert.ToChar(sqlDataReader["Gender"]);
+                        employeeData.PhoneNumber = Convert.ToDouble(sqlDataReader["PhoneNumber"]);
+                        employeeData.Address = sqlDataReader["Address"].ToString();
+                        employeeData.Department = sqlDataReader["Department"].ToString();
+                        employeeData.BasicPay = Convert.ToDouble(sqlDataReader["BasicPay"]);
+                        employeeData.Deductions = Convert.ToDouble(sqlDataReader["Deductions"]);
+                        employeeData.IncomeTax = Convert.ToDouble(sqlDataReader["IncomeTax"]);
+                        employeeData.TaxablePay = Convert.ToDouble(sqlDataReader["TaxablePay"]);
+                        employeeData.NetPay = Convert.ToDouble(sqlDataReader["NetPay"]);
 
-                    Console.WriteLine("ID" + employeeData.ID + "\n" +
-                        "Name" + employeeData.Name + "\n" +
-                        "Salary" + employeeData.Salary +
-                        "Start Date" + employeeData.StartDate +
-                        "Gender" + employeeData.Gender +
-                        "Phone Number" + employeeData.PhoneNumber +
-                        "Address" + employeeData.Address +
-                        "Department" + employeeData.Department +
-                        "Basic Pay" + employeeData.Basic_Pay +
-                        "Deductions" + employeeData.Deductions +
-                        "Income Tax" + employeeData.Income_Tax +
-                        "Taxable Pay" + employeeData.Taxable_Pay +
-                        "Net Pay" + employeeData.Net_Pay);
+                        Console.WriteLine("ID: " + employeeData.ID + "\n" +
+                            "Name: " + employeeData.Name + "\n" +
+                            "Salary: " + employeeData.Salary + "\n" +
+                            "Start Date: " + employeeData.StartDate + "\n" +
+                            "Gender: " + employeeData.Gender + "\n" +
+                            "Phone Number: " + employeeData.PhoneNumber + "\n" +
+                            "Address: " + employeeData.Address + "\n" +
+                            "Department: " + employeeData.Department + "\n" +
+                            "Basic Pay: " + employeeData.BasicPay + "\n" +
+                            "Deductions: " + employeeData.Deductions + "\n" +
+                            "Income Tax: " + employeeData.IncomeTax + "\n" +
+                            "Taxable Pay: " + employeeData.TaxablePay + "\n" +
+                            "Net Pay: " + employeeData.NetPay);
+                    }
+                    sqlDataReader.Close();
                 }
-                           sqlDataReader.Close();
+                sqlConnection.Close();
             }
-                    sqlConnection.Close();
         }
 
         public int UpdateSalary()
         {
             sqlConnection.Open();
-            string query = "update employee_payroll set BasicPay=3000000 where EmployeeName= 'Terrrisa'";
+            string query = "update employee_payroll set BasicPay=3000000 where Name= 'Terrrisa'";
 
             SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
             int result = sqlCommand.ExecuteNonQuery();
@@ -107,7 +113,7 @@ namespace EmployeePayrollADO
             return result;
         }
 
-        public int UpdateSalary(EmployeeData employeeData)
+        public int UpdateSalarySP(EmployeeData employeeData)
         {
             int result = 0;
             try
@@ -116,28 +122,29 @@ namespace EmployeePayrollADO
                 {
                     SqlCommand sqlCommand = new SqlCommand("dbo.UpdateDetails", this.sqlConnection);
                     sqlCommand.CommandType = CommandType.StoredProcedure;
-                    sqlCommand.Parameters.AddWithValue("@salary", employeeData.Basic_Pay);
-                    sqlCommand.Parameters.AddWithValue("@Name", employeeData.Name);
-                    sqlCommand.Parameters.AddWithValue("@Id", employeeData.ID);
+                    sqlCommand.Parameters.AddWithValue("@BasicPay", 3000000);
+                    sqlCommand.Parameters.AddWithValue("@Name", "Terrisa");
+                    sqlCommand.Parameters.AddWithValue("@Id", 4);
 
                     sqlConnection.Open();
                     result = sqlCommand.ExecuteNonQuery();
+
                     if (result != 0)
                     {
                         Console.WriteLine("Updated");
+                        return result;
                     }
                     else
                     {
                         Console.WriteLine("Not Updated");
+                        return result;
                     }
-
                 }
             }
             catch (Exception)
             {
                 throw new CustomException(CustomException.ExceptionType.No_data_found, "Cannot Update");
             }
-            return result;
         }
 
         public string DataBasedOnDateRange()
@@ -182,25 +189,53 @@ namespace EmployeePayrollADO
             employeeData.PhoneNumber = Convert.ToDouble(sqlDataReader["PhoneNumber"]);
             employeeData.Address = sqlDataReader["Address"].ToString();
             employeeData.Department = sqlDataReader["Department"].ToString();
-            employeeData.Basic_Pay = Convert.ToDouble(sqlDataReader["BasicPay"]);
+            employeeData.BasicPay = Convert.ToDouble(sqlDataReader["BasicPay"]);
             employeeData.Deductions = Convert.ToDouble(sqlDataReader["Deduction"]);
-            employeeData.Income_Tax = Convert.ToDouble(sqlDataReader["IncomeTax"]);
-            employeeData.Taxable_Pay = Convert.ToDouble(sqlDataReader["TaxablePay"]);
-            employeeData.Net_Pay = Convert.ToDouble(sqlDataReader["NetPay"]);
+            employeeData.IncomeTax = Convert.ToDouble(sqlDataReader["IncomeTax"]);
+            employeeData.TaxablePay = Convert.ToDouble(sqlDataReader["TaxablePay"]);
+            employeeData.NetPay = Convert.ToDouble(sqlDataReader["NetPay"]);
 
             Console.WriteLine("ID" + employeeData.ID + "\n" +
                 "Name" + employeeData.Name + "\n" +
-                "Salary" + employeeData.Salary +
-                "Start Date" + employeeData.StartDate +
-                "Gender" + employeeData.Gender +
-                "Phone Number" + employeeData.PhoneNumber +
-                "Address" + employeeData.Address +
-                "Department" + employeeData.Department +
-                "Basic Pay" + employeeData.Basic_Pay +
-                "Deductions" + employeeData.Deductions +
-                "Income Tax" + employeeData.Income_Tax +
-                "Taxable Pay" + employeeData.Taxable_Pay +
-                "Net Pay" + employeeData.Net_Pay);
+                "Salary" + employeeData.Salary + "\n" +
+                "Start Date" + employeeData.StartDate + "\n" +
+                "Gender" + employeeData.Gender + "\n" +
+                "Phone Number" + employeeData.PhoneNumber + "\n" +
+                "Address" + employeeData.Address + "\n" +
+                "Department" + employeeData.Department + "\n" +
+                "Basic Pay" + employeeData.BasicPay + "\n" +
+                "Deductions" + employeeData.Deductions + "\n" +
+                "Income Tax" + employeeData.IncomeTax + "\n" +
+                "Taxable Pay" + employeeData.TaxablePay + "\n" +
+                "Net Pay" + employeeData.NetPay);
+        }
+
+        public int RemoveEmployee()
+        {
+            try
+            {
+                using (sqlConnection)
+                {
+                    SqlCommand command = new SqlCommand("ado.DeleteDetails", sqlConnection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@ID", employeeData.ID);
+                    sqlConnection.Open();
+                    int result = command.ExecuteNonQuery();
+
+                    if (result != 0)
+                    {
+                        Console.WriteLine("Contact is deleted");
+                        return result;
+                    }
+                    else
+                        return result;
+                    sqlConnection.Close();
+                }
+            }
+            catch (Exception)
+            {
+                throw new CustomException(CustomException.ExceptionType.No_data_found, "No Data Found");
+            }
         }
     }
 }
